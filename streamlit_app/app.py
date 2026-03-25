@@ -25,8 +25,8 @@ def login_page():
                 conn = get_conn()
                 cur = conn.cursor()
                 cur.execute(
-                    "SELECT userid, username FROM [user] WHERE userid=? AND pwd=?",
-                    userid, pwd
+                    "SELECT userid, username FROM [user] WHERE userid=%s AND pwd=%s",
+                    (userid, pwd)
                 )
                 row = cur.fetchone()
                 conn.close()
@@ -85,16 +85,16 @@ def cust_page():
     back_button()
     st.markdown("---")
 
-    # 查詢
     search = st.text_input("🔍 查詢（代碼 / 名稱 / 備註）", key="cust_search")
     conn = get_conn()
     cur = conn.cursor()
     if search:
+        q = f"%{search}%"
         cur.execute(
             "SELECT cust_code,cust_name,remark FROM cust "
-            "WHERE cust_code LIKE ? OR cust_name LIKE ? OR remark LIKE ? "
+            "WHERE cust_code LIKE %s OR cust_name LIKE %s OR remark LIKE %s "
             "ORDER BY cust_code",
-            f"%{search}%", f"%{search}%", f"%{search}%"
+            (q, q, q)
         )
     else:
         cur.execute("SELECT cust_code,cust_name,remark FROM cust ORDER BY cust_code")
@@ -103,7 +103,6 @@ def cust_page():
 
     df = to_df(rows, ["客戶代碼", "客戶名稱", "備註說明"])
 
-    # 新增
     with st.expander("➕ 新增客戶"):
         with st.form("cust_add"):
             c1, c2, c3 = st.columns(3)
@@ -117,7 +116,8 @@ def cust_page():
                     try:
                         conn = get_conn()
                         conn.cursor().execute(
-                            "INSERT INTO cust VALUES (?,?,?)", code, name, remark or None
+                            "INSERT INTO cust VALUES (%s,%s,%s)",
+                            (code, name, remark or None)
                         )
                         conn.close()
                         st.success(f"已新增 {code}")
@@ -125,7 +125,6 @@ def cust_page():
                     except Exception as e:
                         st.error(str(e))
 
-    # 表格 + 修改/刪除
     st.dataframe(df, use_container_width=True, hide_index=True)
 
     if not df.empty:
@@ -147,8 +146,8 @@ def cust_page():
                         try:
                             conn = get_conn()
                             conn.cursor().execute(
-                                "UPDATE cust SET cust_name=?, remark=? WHERE cust_code=?",
-                                new_name, new_remark or None, sel_code
+                                "UPDATE cust SET cust_name=%s, remark=%s WHERE cust_code=%s",
+                                (new_name, new_remark or None, sel_code)
                             )
                             conn.close()
                             st.success("已更新")
@@ -164,7 +163,9 @@ def cust_page():
                 if st.button("確定刪除", key="cust_del_ok"):
                     try:
                         conn = get_conn()
-                        conn.cursor().execute("DELETE FROM cust WHERE cust_code=?", sel_code)
+                        conn.cursor().execute(
+                            "DELETE FROM cust WHERE cust_code=%s", (sel_code,)
+                        )
                         conn.close()
                         st.session_state.pop("cust_confirm_del", None)
                         st.success("已刪除")
@@ -183,11 +184,12 @@ def fact_page():
     conn = get_conn()
     cur = conn.cursor()
     if search:
+        q = f"%{search}%"
         cur.execute(
             "SELECT fact_code,fact_name,remark FROM fact "
-            "WHERE fact_code LIKE ? OR fact_name LIKE ? OR remark LIKE ? "
+            "WHERE fact_code LIKE %s OR fact_name LIKE %s OR remark LIKE %s "
             "ORDER BY fact_code",
-            f"%{search}%", f"%{search}%", f"%{search}%"
+            (q, q, q)
         )
     else:
         cur.execute("SELECT fact_code,fact_name,remark FROM fact ORDER BY fact_code")
@@ -209,7 +211,8 @@ def fact_page():
                     try:
                         conn = get_conn()
                         conn.cursor().execute(
-                            "INSERT INTO fact VALUES (?,?,?)", code, name, remark or None
+                            "INSERT INTO fact VALUES (%s,%s,%s)",
+                            (code, name, remark or None)
                         )
                         conn.close()
                         st.success(f"已新增 {code}")
@@ -238,8 +241,8 @@ def fact_page():
                         try:
                             conn = get_conn()
                             conn.cursor().execute(
-                                "UPDATE fact SET fact_name=?, remark=? WHERE fact_code=?",
-                                new_name, new_remark or None, sel_code
+                                "UPDATE fact SET fact_name=%s, remark=%s WHERE fact_code=%s",
+                                (new_name, new_remark or None, sel_code)
                             )
                             conn.close()
                             st.success("已更新")
@@ -255,7 +258,9 @@ def fact_page():
                 if st.button("確定刪除", key="fact_del_ok"):
                     try:
                         conn = get_conn()
-                        conn.cursor().execute("DELETE FROM fact WHERE fact_code=?", sel_code)
+                        conn.cursor().execute(
+                            "DELETE FROM fact WHERE fact_code=%s", (sel_code,)
+                        )
                         conn.close()
                         st.session_state.pop("fact_confirm_del", None)
                         st.success("已刪除")
@@ -270,7 +275,6 @@ def item_page():
     back_button()
     st.markdown("---")
 
-    # 廠商下拉選項
     conn = get_conn()
     cur = conn.cursor()
     cur.execute("SELECT fact_code, fact_name FROM fact ORDER BY fact_code")
@@ -280,12 +284,13 @@ def item_page():
 
     search = st.text_input("🔍 查詢（代碼 / 名稱）", key="item_search")
     if search:
+        q = f"%{search}%"
         cur.execute(
             "SELECT i.item_code, i.item_name, i.fact_code, f.fact_name "
             "FROM item i LEFT JOIN fact f ON i.fact_code=f.fact_code "
-            "WHERE i.item_code LIKE ? OR i.item_name LIKE ? "
+            "WHERE i.item_code LIKE %s OR i.item_name LIKE %s "
             "ORDER BY i.item_code",
-            f"%{search}%", f"%{search}%"
+            (q, q)
         )
     else:
         cur.execute(
@@ -312,7 +317,8 @@ def item_page():
                     try:
                         conn = get_conn()
                         conn.cursor().execute(
-                            "INSERT INTO item VALUES (?,?,?)", code, name, fact
+                            "INSERT INTO item VALUES (%s,%s,%s)",
+                            (code, name, fact)
                         )
                         conn.close()
                         st.success(f"已新增 {code}")
@@ -343,8 +349,8 @@ def item_page():
                         try:
                             conn = get_conn()
                             conn.cursor().execute(
-                                "UPDATE item SET item_name=?, fact_code=? WHERE item_code=?",
-                                new_name, new_fact, sel_code
+                                "UPDATE item SET item_name=%s, fact_code=%s WHERE item_code=%s",
+                                (new_name, new_fact, sel_code)
                             )
                             conn.close()
                             st.success("已更新")
@@ -360,7 +366,9 @@ def item_page():
                 if st.button("確定刪除", key="item_del_ok"):
                     try:
                         conn = get_conn()
-                        conn.cursor().execute("DELETE FROM item WHERE item_code=?", sel_code)
+                        conn.cursor().execute(
+                            "DELETE FROM item WHERE item_code=%s", (sel_code,)
+                        )
                         conn.close()
                         st.session_state.pop("item_confirm_del", None)
                         st.success("已刪除")
@@ -379,11 +387,12 @@ def user_page():
     conn = get_conn()
     cur = conn.cursor()
     if search:
+        q = f"%{search}%"
         cur.execute(
             "SELECT userid,username,pwd FROM [user] "
-            "WHERE userid LIKE ? OR username LIKE ? "
+            "WHERE userid LIKE %s OR username LIKE %s "
             "ORDER BY userid",
-            f"%{search}%", f"%{search}%"
+            (q, q)
         )
     else:
         cur.execute("SELECT userid,username,pwd FROM [user] ORDER BY userid")
@@ -405,7 +414,8 @@ def user_page():
                     try:
                         conn = get_conn()
                         conn.cursor().execute(
-                            "INSERT INTO [user] VALUES (?,?,?)", code, name, pwd
+                            "INSERT INTO [user] VALUES (%s,%s,%s)",
+                            (code, name, pwd)
                         )
                         conn.close()
                         st.success(f"已新增 {code}")
@@ -434,8 +444,8 @@ def user_page():
                         try:
                             conn = get_conn()
                             conn.cursor().execute(
-                                "UPDATE [user] SET username=?, pwd=? WHERE userid=?",
-                                new_name, new_pwd, sel_code
+                                "UPDATE [user] SET username=%s, pwd=%s WHERE userid=%s",
+                                (new_name, new_pwd, sel_code)
                             )
                             conn.close()
                             st.success("已更新")
@@ -451,7 +461,9 @@ def user_page():
                 if st.button("確定刪除", key="user_del_ok"):
                     try:
                         conn = get_conn()
-                        conn.cursor().execute("DELETE FROM [user] WHERE userid=?", sel_code)
+                        conn.cursor().execute(
+                            "DELETE FROM [user] WHERE userid=%s", (sel_code,)
+                        )
                         conn.close()
                         st.session_state.pop("user_confirm_del", None)
                         st.success("已刪除")
