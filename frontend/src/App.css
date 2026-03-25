@@ -1,0 +1,264 @@
+/* ============================================================
+   App.css - Global Styles for 三層式資料維護系統
+   ============================================================ */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', 'Microsoft JhengHei', Arial, sans-serif;
+  background-color: #f0f2f5;
+  color: #333;
+}
+
+/* ── Top Navigation ─────────────────────────────────────────── */
+.top-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+  color: #fff;
+  padding: 0 24px;
+  height: 58px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.top-nav-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.top-nav-user {
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+/* ── App Shell ──────────────────────────────────────────────── */
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-body {
+  flex: 1;
+  padding: 28px 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ── Login Page ─────────────────────────────────────────────── */
+.login-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+}
+
+.login-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 40px 44px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+}
+
+.login-logo {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.login-logo .bi {
+  font-size: 3rem;
+  color: #1a73e8;
+}
+
+.login-logo h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #333;
+  margin-top: 8px;
+}
+
+.login-logo p {
+  color: #888;
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+/* ── Main Menu ──────────────────────────────────────────────── */
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+  margin-top: 12px;
+}
+
+.menu-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 32px 20px;
+  text-align: center;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.menu-card:hover {
+  border-color: #1a73e8;
+  box-shadow: 0 6px 20px rgba(26,115,232,0.2);
+  transform: translateY(-3px);
+}
+
+.menu-card .menu-icon {
+  font-size: 2.6rem;
+  margin-bottom: 14px;
+}
+
+.menu-card .menu-label {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #333;
+}
+
+/* ── Data Pages ─────────────────────────────────────────────── */
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.page-header h4 {
+  margin: 0;
+  font-weight: 700;
+  color: #1a73e8;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.toolbar input[type="text"] {
+  flex: 1;
+  min-width: 180px;
+  max-width: 320px;
+}
+
+/* ── Table ──────────────────────────────────────────────────── */
+.data-table-wrap {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  overflow: hidden;
+}
+
+.data-table-wrap table {
+  margin: 0;
+}
+
+.data-table-wrap th {
+  background: #1a73e8;
+  color: #fff;
+  font-weight: 600;
+  white-space: nowrap;
+  padding: 10px 14px;
+  border: none;
+}
+
+.data-table-wrap td {
+  padding: 8px 14px;
+  vertical-align: middle;
+  border-color: #e8eaf0;
+}
+
+.data-table-wrap tbody tr:hover {
+  background: #f1f6ff;
+}
+
+/* ── Modal ──────────────────────────────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+
+.modal-box {
+  background: #fff;
+  border-radius: 12px;
+  padding: 32px 36px;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+  animation: modalIn 0.2s ease;
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.modal-box h5 {
+  margin-bottom: 20px;
+  font-weight: 700;
+  color: #1a73e8;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.modal-footer-btns {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+/* ── Alerts ─────────────────────────────────────────────────── */
+.alert-bar {
+  border-radius: 8px;
+  padding: 10px 16px;
+  margin-bottom: 14px;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.alert-bar.success { background: #e8f5e9; color: #2e7d32; border-left: 4px solid #43a047; }
+.alert-bar.error   { background: #ffebee; color: #c62828; border-left: 4px solid #e53935; }
+
+/* ── Misc ───────────────────────────────────────────────────── */
+.section-title {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 16px;
+}
+
+.badge-code {
+  font-family: monospace;
+  background: #e8eaf6;
+  color: #3949ab;
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 0.85em;
+}
